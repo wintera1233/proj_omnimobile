@@ -23,15 +23,15 @@ int main(int argc, char **argv)
     geometry_msgs::Pose2D pose1;
     ros::Publisher pose_pub = nh.advertise<geometry_msgs::Pose2D>("pose",10);
     ros::Subscriber speed_sub = nh.subscribe("speed",10,callback);
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(10);
     pose1.x=0;
     pose1.y=0;
     pose1.theta=0;
     while(ros::ok()){
         ros::spinOnce();
-        pose1.x+=cur_speed.x*0.01;
-        pose1.y+=cur_speed.y*0.01;
-        pose1.theta+=cur_speed.theta*0.01;
+        pose1.x+=cur_speed.x*0.1;
+        pose1.y+=cur_speed.y*0.1;
+        pose1.theta+=cur_speed.theta*0.1;
         pose_pub.publish(pose1);
         loop_rate.sleep();
     }
