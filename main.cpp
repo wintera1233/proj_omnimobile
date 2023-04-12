@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::Publisher goalpose_pub = nh.advertise<geometry_msgs::Pose2D>("goal_pose",10);
     ros::Subscriber reach_state_sub = nh.subscribe("reach",10,callback);
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(10);
     tempr=0;
     while(ros::ok()){
         ros::spinOnce();

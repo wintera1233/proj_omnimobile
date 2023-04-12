@@ -35,8 +35,8 @@ float min(float a, float b){
 int main(int argc, char **argv)
 {
     int vel=20;
-    float acc1=0.00004;
-    float acc2=0.00008;
+    float acc1=0.0004;
+    float acc2=0.0008;
     float dis_x,dis_y,angu;
     ROS_INFO("### %f,%f",dis_x,dis_y);
     float pre_vel;
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     ros::Publisher reach_pub = nh.advertise<std_msgs::Int64>("reach",10);
     ros::Subscriber pose_sub = nh.subscribe("pose",10,callback_cur);
     ros::Subscriber goal_sub = nh.subscribe("goal_pose",10,callback_goal);
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(10);
     pre_vel=0;
     while(ros::ok()){
         reach1.data=0;

@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     geometry_msgs::Twist speed;
     ros::Publisher speed_pub = nh.advertise<geometry_msgs::Twist>("speed",1);
     ros::Subscriber pose_sub = nh.subscribe("cmd_vel",10,callback);
-    ros::Rate loop_rate(100);
+    ros::Rate loop_rate(10);
     while(ros::ok()){
         ros::spinOnce();
         speed.linear.x=cmd_vel.x;
