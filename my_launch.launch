@@ -1,0 +1,6 @@
+<launch>
+<node type="navigation" pkg="test1" name="navigation" output="screen" />
+<node type="localization" pkg="test1" name="localization" output="screen" />
+<node type="base_control" pkg="test1" name="base_control" output="screen" />
+<node type="main" pkg="test1" name="main" output="screen" />
+</launch>
