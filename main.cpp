@@ -42,9 +42,9 @@ int main(int argc, char **argv)
         while(tempr>=2){
         goal_pose.x=0;
         goal_pose.y=0;
-        goalpose_pub.publish(goal_pose);}
+        goalpose_pub.publish(goal_pose);
+        loop_rate.sleep();}
             //ros::spinOnce();
-            //loop_rate.sleep();
             //ros::shutdown();
         
     }
