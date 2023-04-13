@@ -10,8 +10,8 @@ void callback(const std_msgs::Int64::ConstPtr& msg)
     reach=msg->data;
 }
 int tempr;
-int goalpt[2][2]={
-    {45,40},{45,90}
+int goalpt[3][2]={
+    {0,45},{45,40},{45,90},{}
 };
 
 int main(int argc, char **argv)

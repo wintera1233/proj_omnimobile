@@ -34,9 +34,9 @@ float min(float a, float b){
 }
 int main(int argc, char **argv)
 {
-    int vel=20;
-    float acc1=0.0004;
-    float acc2=0.0008;
+    int vel=5;
+    float acc1=0.004;
+    float acc2=0.008;
     float dis_x,dis_y,angu;
     ROS_INFO("### %f,%f",dis_x,dis_y);
     float pre_vel;
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         ROS_INFO("$lldis: %f,%f",dis_x,dis_y);
         angu=goal_pose.theta-cur_pose.theta;
         if(goal_pose.x!=0&&goal_pose.y!=0){
-          while(fabs(dis_x)>10||fabs(dis_y)>10&&(goal_pose.x!=0||goal_pose.y!=0)){
+          while(fabs(dis_x)>15.625||fabs(dis_y)>15.625&&(goal_pose.x!=0||goal_pose.y!=0)){
             pre_vel+=acount*acc1;
             acount++;
             loop_rate.sleep();
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
             reach1.data=0;
             reach_pub.publish(reach1);
             loop_rate.sleep();
-        while(((fabs(dis_x)<=10&&fabs(dis_x)>=1)||(fabs(dis_y)<=10&&fabs(dis_y)>=1))&&(goal_pose.x!=0||goal_pose.y!=0)){
+        while(((fabs(dis_x)<=15.625&&fabs(dis_x)>=1)||(fabs(dis_y)<=15.625&&fabs(dis_y)>=1))&&(goal_pose.x!=0||goal_pose.y!=0)){
                 pre_vel-=acount*acc2;
                 acount--;
                 loop_rate.sleep();
