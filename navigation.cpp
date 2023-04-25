@@ -34,11 +34,10 @@ float min(float a, float b){
 }
 int main(int argc, char **argv)
 {
-    int vel=0.1;
-    float acc1=0.001;
+    float vel=0.1;
+    float acc1=0.05;
     float dis_x,dis_y,angu;
     float pre_vel;
-    int acount=1;
     int temp=0;
     ros::init(argc,argv,"navigation_node");
     ros::NodeHandle nh;
@@ -58,11 +57,12 @@ int main(int argc, char **argv)
         dis_y=goal_pose.y-cur_pose.y;
         angu=goal_pose.theta-cur_pose.theta;
         if(goal_pose.x!=0&&goal_pose.y!=0){
-          while(fabs(dis_x)>0.5||fabs(dis_y)>0.5&&(goal_pose.x!=0||goal_pose.y!=0)){
-            pre_vel+=acount*acc1;
-            acount++;
+          while(fabs(dis_x)>0.1||fabs(dis_y)>0.1){
+            ROS_INFO("accelerating...\n");
+            pre_vel+=acc1;
             cmd_vel1.linear.x=(dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2))*min(vel,pre_vel);
             cmd_vel1.linear.y=(dis_y)/sqrt(pow(dis_x,2)+pow(dis_y,2))*min(vel,pre_vel);
+            ROS_INFO("%f %f %f %f\n",pre_vel,min(vel,pre_vel),cmd_vel1.linear.x,cmd_vel1.linear.y);
             if(temp==0){
                   cmd_vel1.angular.z=asin((dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2)));
                   temp++;
@@ -70,23 +70,22 @@ int main(int argc, char **argv)
             vel_pub.publish(cmd_vel1);
             reach1.data=0;
             reach_pub.publish(reach1);
-            loop_rate.sleep();
             ros::spinOnce();
+            loop_rate.sleep();
             dis_x=goal_pose.x-cur_pose.x;
             dis_y=goal_pose.y-cur_pose.y;
         }
-            acount=1;
             temp=0;
             cmd_vel1.angular.z=0;
             vel_pub.publish(cmd_vel1);
             reach1.data=0;
             reach_pub.publish(reach1);
             loop_rate.sleep();
-        while(((fabs(dis_x)<=0.5||fabs(dis_y)<=0.5))&&(goal_pose.x!=0||goal_pose.y!=0)){
-                pre_vel-=acount*acc1;
-                acount--;
-                cmd_vel1.linear.x=(dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2))*max(pre_vel,0.2);
-                cmd_vel1.linear.y=(dis_y)/sqrt(pow(dis_x,2)+pow(dis_y,2))*max(pre_vel,0.2); 
+        while((fabs(dis_x)<=0.1&&fabs(dis_x)>0.01||fabs(dis_y)<=0.1&&fabs(dis_y)>0.01)){
+                ROS_INFO("stoping...\n");
+                pre_vel-=acc1;
+                cmd_vel1.linear.x=(dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2))*max(pre_vel,0);
+                cmd_vel1.linear.y=(dis_y)/sqrt(pow(dis_x,2)+pow(dis_y,2))*max(pre_vel,0); 
             if(temp==0){
                   cmd_vel1.angular.z=asin((dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2)));
                   temp++;
@@ -100,7 +99,7 @@ int main(int argc, char **argv)
             dis_x=goal_pose.x-cur_pose.x;
             dis_y=goal_pose.y-cur_pose.y;
         }
-        if(fabs(dis_x)<=0.01&&fabs(dis_y)<=0.01&&(goal_pose.x!=0||goal_pose.y!=0)){ 
+        if(fabs(dis_x)<=0.01||fabs(dis_y)<=0.01&&(goal_pose.x!=0||goal_pose.y!=0)){ 
             cmd_vel1.angular.z=0;
             cmd_vel1.linear.x=0;
             cmd_vel1.linear.y=0;
@@ -119,11 +118,13 @@ int main(int argc, char **argv)
             cmd_vel1.linear.x=0;
             cmd_vel1.linear.y=0;
             vel_pub.publish(cmd_vel1);
+            ros::spinOnce();
             loop_rate.sleep();
         }
     }
         
     }
+
 
 
 
