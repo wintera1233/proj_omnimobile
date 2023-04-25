@@ -10,7 +10,7 @@ struct car_speed{
 }cur_speed;
 void callback(const geometry_msgs::Twist::ConstPtr& msg )
 {
-    ROS_INFO("###speed,%f,%f,%f",msg->linear.x,msg->linear.y,msg->angular.z);
+    ROS_INFO("Speed:%f,%f,%f\n",msg->linear.x,msg->linear.y,msg->angular.z);
     cur_speed.x=msg->linear.x;
     cur_speed.y=msg->linear.y;
     cur_speed.theta=msg->angular.z;
@@ -21,8 +21,8 @@ int main(int argc, char **argv)
     ros::init(argc,argv,"lcoalization_node");
     ros::NodeHandle nh;
     geometry_msgs::Pose2D pose1;
-    ros::Publisher pose_pub = nh.advertise<geometry_msgs::Pose2D>("pose",10);
-    ros::Subscriber speed_sub = nh.subscribe("speed",10,callback);
+    ros::Publisher pose_pub = nh.advertise<geometry_msgs::Pose2D>("pose",1);
+    ros::Subscriber speed_sub = nh.subscribe("speed",1,callback);
     ros::Rate loop_rate(10);
     pose1.x=0;
     pose1.y=0;
