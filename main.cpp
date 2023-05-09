@@ -4,14 +4,15 @@
 #include <std_msgs/Int64.h>
 #include <math.h>
 int reach;
+
 void callback(const std_msgs::Int64::ConstPtr& msg)
 {
     ROS_INFO("Reach or not:%ld\n",msg->data);
     reach=msg->data;
 }
-int tempr;
-float goalpt[2][2]={
-    {0.45,0.40},{0.45,0.90}
+int tempr=0;
+float goalpt[3][2]={
+    {0.45,0},{0.45,0.4},{0.45,0.9}
 };
 
 int main(int argc, char **argv)
@@ -33,11 +34,13 @@ int main(int argc, char **argv)
             loop_rate.sleep();
         if(reach==1){
             tempr++;
+            printf("%d",tempr);
             goalpose_pub.publish(goal_pose);
             ros::spinOnce;
             loop_rate.sleep();
         }}    
-        while(tempr>=2){
+        while(tempr>=3){
+        ROS_INFO("reachreach!\n");
         goal_pose.x=0;
         goal_pose.y=0;
         goalpose_pub.publish(goal_pose);

@@ -9,7 +9,7 @@ struct car_pose{
     float x;
     float y;
     float theta;
-}cur_pose,goal_pose;
+}cur_pose,goal_pose,pre_goal_pose;
 void callback_cur(const geometry_msgs::Pose2D::ConstPtr& msg)
 {
     ROS_INFO("POSE:%f,%f,%f\n",msg->x,msg->y,msg->theta);
@@ -19,6 +19,7 @@ void callback_cur(const geometry_msgs::Pose2D::ConstPtr& msg)
 }
 void callback_goal(const geometry_msgs::Pose2D::ConstPtr& msg)
 {
+    
     ROS_INFO("GOAL:%f,%f,%f\n",msg->x,msg->y,msg->theta);
     goal_pose.x=msg->x;
     goal_pose.y=msg->y;
@@ -34,8 +35,8 @@ float min(float a, float b){
 }
 int main(int argc, char **argv)
 {
-    float vel=0.1;
-    float acc1=0.05;
+    float vel=0.0975;
+    float acc1=0.00975;
     float dis_x,dis_y,angu;
     float pre_vel;
     int temp=0;
@@ -56,13 +57,12 @@ int main(int argc, char **argv)
         dis_x=goal_pose.x-cur_pose.x;
         dis_y=goal_pose.y-cur_pose.y;
         angu=goal_pose.theta-cur_pose.theta;
-        if(goal_pose.x!=0&&goal_pose.y!=0){
-          while(fabs(dis_x)>0.1||fabs(dis_y)>0.1){
+        if(goal_pose.x!=0||goal_pose.y!=0){
+          while(fabs(dis_x)>0.065||fabs(dis_y)>0.065){
             ROS_INFO("accelerating...\n");
             pre_vel+=acc1;
             cmd_vel1.linear.x=(dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2))*min(vel,pre_vel);
             cmd_vel1.linear.y=(dis_y)/sqrt(pow(dis_x,2)+pow(dis_y,2))*min(vel,pre_vel);
-            ROS_INFO("%f %f %f %f\n",pre_vel,min(vel,pre_vel),cmd_vel1.linear.x,cmd_vel1.linear.y);
             if(temp==0){
                   cmd_vel1.angular.z=asin((dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2)));
                   temp++;
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
             reach1.data=0;
             reach_pub.publish(reach1);
             loop_rate.sleep();
-        while((fabs(dis_x)<=0.1&&fabs(dis_x)>0.01||fabs(dis_y)<=0.1&&fabs(dis_y)>0.01)){
+        while((fabs(dis_x)<=0.065&&fabs(dis_x)>0.01||fabs(dis_y)<=0.065&&fabs(dis_y)>0.01)){
                 ROS_INFO("stoping...\n");
                 pre_vel-=acc1;
                 cmd_vel1.linear.x=(dis_x)/sqrt(pow(dis_x,2)+pow(dis_y,2))*max(pre_vel,0);
@@ -104,7 +104,12 @@ int main(int argc, char **argv)
             cmd_vel1.linear.x=0;
             cmd_vel1.linear.y=0;
             vel_pub.publish(cmd_vel1);
-            reach1.data=1;
+            ROS_INFO("pre:%f,%f goal:%f,%f\n",pre_goal_pose.x,pre_goal_pose.y,goal_pose.x,goal_pose.y);
+            if(pre_goal_pose.x!=goal_pose.x||pre_goal_pose.y!=pre_goal_pose.y){
+                pre_goal_pose.x=goal_pose.x;
+                pre_goal_pose.y=goal_pose.y;
+                pre_goal_pose.theta=goal_pose.theta;
+                reach1.data=1;}
             reach_pub.publish(reach1);
             loop_rate.sleep();
             reach1.data=0;
@@ -124,7 +129,6 @@ int main(int argc, char **argv)
     }
         
     }
-
 
 
 
