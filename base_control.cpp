@@ -9,7 +9,7 @@ struct car_speed{
 }cmd_vel;
 void callback(const geometry_msgs::Twist::ConstPtr& msg)
 {
-    ROS_INFO("###cmd_vel,%f,%f,%f",msg->linear.x,msg->linear.y,msg->angular.z);
+    ROS_INFO("Cmd_vel:%f,%f,%f\n",msg->linear.x,msg->linear.y,msg->angular.z);
     cmd_vel.x=msg->linear.x;
     cmd_vel.y=msg->linear.y;
     cmd_vel.theta=msg->angular.z;
@@ -21,8 +21,8 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     geometry_msgs::Twist speed;
     ros::Publisher speed_pub = nh.advertise<geometry_msgs::Twist>("speed",1);
-    ros::Subscriber pose_sub = nh.subscribe("cmd_vel",10,callback);
-    ros::Rate loop_rate(100);
+    ros::Subscriber pose_sub = nh.subscribe("cmd_vel",1,callback);
+    ros::Rate loop_rate(10);
     while(ros::ok()){
         ros::spinOnce();
         speed.linear.x=cmd_vel.x;
