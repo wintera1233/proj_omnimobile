@@ -1,0 +1,17 @@
+<launch>
+    <node pkg="rosserial_server" type="serial_node" name="serial_server" output="screen">
+      <param name="port" value="/dev/ttyUSB0" />
+      <param name="baud" value="115200" />
+      <rosparam>
+          require:
+              publishers: [ speed_fromSTM ]
+              subscribers: [ cmdconst ]
+      </rosparam>
+    </node>
+    <node pkg="omnicontrol" type="cmncnt" name="cmncnt" output="screen">
+        <rosparam command="load" file="$(find omnicontrol)/params/cmncnt.yaml" />
+    </node>    
+    <node pkg="omnicontrol" type="navigation" name="navigation" output="screen" />
+    <node pkg="omnicontrol" type="localization" name="localization" output="screen" />
+    <node pkg="omnicontrol" type="main" name="main" output="screen" />
+</launch>
