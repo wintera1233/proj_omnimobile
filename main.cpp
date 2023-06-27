@@ -49,3 +49,62 @@ int main(int argc, char **argv)
         
     }
 }
+
+
+#include <ros/ros.h>
+#include <iostream>
+#include <geometry_msgs/Pose2D.h>
+#include <std_msgs/Int64.h>
+#include <math.h>
+int reach;
+void callback(const std_msgs::Int64::ConstPtr& msg)
+{
+    ROS_INFO("Reach or not:%ld\n",msg->data);
+    reach=msg->data;
+}
+int tempr=0;
+float goalpt[5][2]={
+    {0.2,0},
+    {0.2,0.1},
+    {0.35,0.1},
+    {0.35,0.5},
+    {0,0}
+};
+
+int main(int argc, char **argv)
+{
+    ros::init(argc,argv,"main_node");
+    geometry_msgs::Pose2D goal_pose;
+    ros::NodeHandle nh;
+    ros::Publisher goalpose_pub = nh.advertise<geometry_msgs::Pose2D>("goal_pose",10);
+    ros::Subscriber reach_state_sub = nh.subscribe("reach",10,callback);
+    ros::Rate loop_rate(100);
+    tempr=0;
+    while(ros::ok()){
+        goal_pose.x=goalpt[tempr][0];
+        goal_pose.y=goalpt[tempr][1];
+        goal_pose.theta=0;
+        goalpose_pub.publish(goal_pose);
+        loop_rate.sleep();
+        ros::spinOnce();
+        while(tempr<=4){
+            goalpose_pub.publish(goal_pose);
+            loop_rate.sleep();
+            ros::spinOnce();
+        if(reach==1){
+            tempr++;
+            goal_pose.x=goalpt[tempr][0];
+            goal_pose.y=goalpt[tempr][1];
+            goalpose_pub.publish(goal_pose);
+            loop_rate.sleep();
+            ros::spinOnce;
+        }}    
+        while(tempr>4){
+        ROS_INFO("########reach!\n");
+        goal_pose.x=10000;
+        goal_pose.y=10000;
+        goal_pose.theta=0;
+        goalpose_pub.publish(goal_pose);
+        loop_rate.sleep();}    
+    }
+}
